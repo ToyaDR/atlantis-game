@@ -53,6 +53,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Boost"",
+                    ""type"": ""Button"",
+                    ""id"": ""1830cc18-985c-4f73-bd5f-63fc70cf4727"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -99,6 +108,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b5ece86e-5306-4eda-879f-ec0ae1322314"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Boost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f69625e8-3c5d-4f41-a86b-5d810f7af99e"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Boost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -110,6 +141,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Roll = m_Player.FindAction("Roll", throwIfNotFound: true);
+        m_Player_Boost = m_Player.FindAction("Boost", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -172,6 +204,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Roll;
+    private readonly InputAction m_Player_Boost;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -179,6 +212,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Roll => m_Wrapper.m_Player_Roll;
+        public InputAction @Boost => m_Wrapper.m_Player_Boost;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -197,6 +231,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Roll.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRoll;
                 @Roll.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRoll;
                 @Roll.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRoll;
+                @Boost.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBoost;
+                @Boost.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBoost;
+                @Boost.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBoost;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -210,6 +247,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Roll.started += instance.OnRoll;
                 @Roll.performed += instance.OnRoll;
                 @Roll.canceled += instance.OnRoll;
+                @Boost.started += instance.OnBoost;
+                @Boost.performed += instance.OnBoost;
+                @Boost.canceled += instance.OnBoost;
             }
         }
     }
@@ -219,5 +259,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
+        void OnBoost(InputAction.CallbackContext context);
     }
 }
