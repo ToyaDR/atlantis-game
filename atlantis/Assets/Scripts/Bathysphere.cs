@@ -13,15 +13,18 @@ public class Bathysphere : MonoBehaviour
 
     private PlayerControls _playerControls;
 
+    private Rigidbody _rigidbody;
+
     public void Awake()
     {
+        _rigidbody = GetComponent<Rigidbody>();
         _horizontalInput = Vector3.zero;
         _verticalInput = Vector3.zero;
 
         _pitchAndYawInput = Vector3.zero;
         _rollInput = Vector3.zero;
 
-        _rotateSpeed = 100f;
+        _rotateSpeed = 1000f;
 
         _playerControls = new PlayerControls();
 
@@ -50,7 +53,7 @@ public class Bathysphere : MonoBehaviour
             return;
         }
         
-        _verticalInput = Vector3.up * Time.deltaTime * 5f;
+        _verticalInput = transform.up * 25f;
         
         if (ctx.control.shortDisplayName == "RT")
         {
@@ -86,7 +89,7 @@ public class Bathysphere : MonoBehaviour
     private void RotateWithPitchAndYaw(InputAction.CallbackContext ctx)
     {
         Vector2 rightStickMovement = ctx.ReadValue<Vector2>();
-        _pitchAndYawInput = new Vector3(rightStickMovement.y, rightStickMovement.x, 0) * Time.deltaTime * _rotateSpeed;
+        _pitchAndYawInput = new Vector3(rightStickMovement.y*-1, rightStickMovement.x, 0) * Time.deltaTime * _rotateSpeed;
     }
 
     private void StopHorizontalMovement()
@@ -114,12 +117,13 @@ public class Bathysphere : MonoBehaviour
     {
         if (_horizontalInput != Vector3.zero || _verticalInput != Vector3.zero)
         {
-            gameObject.transform.Translate(_horizontalInput+_verticalInput);
+            _rigidbody.AddForce(_horizontalInput+_verticalInput);
         }
 
         if (_pitchAndYawInput != Vector3.zero || _rollInput != Vector3.zero)
         {
-            gameObject.transform.Rotate(_pitchAndYawInput+_rollInput);
+            Quaternion deltaRotation = Quaternion.Euler(_pitchAndYawInput + _rollInput);
+            _rigidbody.MoveRotation(_rigidbody.rotation*deltaRotation);
         }
     }
 
@@ -130,7 +134,7 @@ public class Bathysphere : MonoBehaviour
      */
     private static float CalculateMovement(float velocity)
     {
-        float multipliedVelocity = velocity * 0.5f;
+        float multipliedVelocity = velocity * 2f;
         float movement = Time.fixedDeltaTime * Mathf.Pow(multipliedVelocity, 2) + multipliedVelocity;
         return (velocity < 0 && movement > 0) ? movement * -1f : movement;
     }
